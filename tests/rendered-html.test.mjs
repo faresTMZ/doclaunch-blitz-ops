@@ -12,12 +12,12 @@ async function render(path = "/") {
   );
 }
 
-async function callApi(body) {
+async function callApi(body, path = "/api/generate") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("api-test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
-    new Request("http://localhost/api/generate", {
+    new Request(`http://localhost${path}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
@@ -34,8 +34,10 @@ test("server-renders the DocLaunch product", async () => {
   const html = await response.text();
   assert.match(html, /<title>DocLaunch/);
   assert.match(html, /Turn product context into/);
-  assert.match(html, /Load Blitz example/);
+  assert.match(html, /Load fictional example/);
   assert.match(html, /Generate release pack/);
+  assert.match(html, /Compare versions/);
+  assert.match(html, /Sample data is fictional/);
   assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/);
 });
 
@@ -57,4 +59,26 @@ test("rejects briefs that are too short to ground", async () => {
   const response = await callApi({ productName: "Blitz", audience: "Players", tone: "Clear", brief: "Short note." });
   assert.equal(response.status, 400);
   assert.match((await response.json()).error, /at least 80 characters/i);
+});
+
+test("compares versions and preserves the difference between removed and unclear", async () => {
+  const before = "Players receive one Streak Shield per calendar month. The feature is available on iOS in the United States. Legacy export is available from the Profile page. Support chat is available around the clock for eligible players.";
+  const after = "Players receive two Streak Shields per calendar month. The feature is available on iOS and Android in the United States and Canada. Legacy export is no longer available from the Profile page. Players receive an in-app notification after a shield is applied.";
+  const response = await callApi({ productName: "Blitz", audience: "Players", tone: "Clear and reassuring", before, after }, "/api/compare");
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.provider, "Demo engine");
+  assert.ok(payload.changes.some((change) => change.type === "changed"));
+  assert.ok(payload.changes.some((change) => change.type === "added"));
+  assert.ok(payload.changes.some((change) => change.type === "removed"));
+  assert.ok(payload.changes.some((change) => change.type === "unclear"));
+  assert.ok(payload.changes.every((change) => change.grounded));
+  assert.match(payload.artifacts.compareReleaseNotes, /Blitz release notes/);
+  assert.match(payload.artifacts.updatedHelpCentre, /Usage allowance/);
+});
+
+test("rejects version comparisons without two substantial sources", async () => {
+  const response = await callApi({ productName: "Blitz", audience: "Players", tone: "Clear", before: "Short A", after: "Short B" }, "/api/compare");
+  assert.equal(response.status, 400);
+  assert.match((await response.json()).error, /both versions need at least 80 characters/i);
 });

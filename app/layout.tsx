@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const protocol = requestHeaders.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
   const imageUrl = `${protocol}://${host}/og.png`;
   const title = "DocLaunch — Source-grounded release documentation";
-  const description = "Turn feature briefs into consistent Help Centre articles, FAQs, and release notes.";
+  const description = "Turn feature briefs and product version changes into consistent, source-grounded support documentation.";
 
   return {
     title,
