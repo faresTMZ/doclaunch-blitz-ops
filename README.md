@@ -73,13 +73,14 @@ Reviewers can exercise the complete workflow using the embedded Blitz example an
 4. Deterministic checks calculate release readiness and flag suspicious evidence or numbers.
 5. The operator reviews open questions, edits the documents, and exports Markdown.
 
-### Compare product versions
+### Compare documentation or product versions
 
-1. The user provides the current and new versions of a specification or document.
-2. The engine aligns related sentences and classifies them as Added, Changed, explicitly Removed, or Unclear.
-3. Every change retains Version A and Version B evidence.
-4. DocLaunch explains the documentation impact, generates release notes, and proposes an updated Help Centre article.
-5. The operator resolves unclear items before applying the update.
+1. The user uploads the current customer-support documentation as Markdown, text, or HTML, pastes it manually, or reuses the last generated Help Centre article.
+2. The user provides the updated documentation or new feature specification.
+3. The engine aligns related sentences and classifies them as Added, Changed, explicitly Removed, or Unclear.
+4. Every change retains Version A and Version B evidence.
+5. DocLaunch explains the documentation impact, generates release notes, and proposes an updated Help Centre article.
+6. The operator resolves unclear items before applying the update.
 
 ## Validation
 
@@ -96,13 +97,14 @@ The application also handles short inputs, provider errors, malformed model resp
 - Live mode expects a compatible chat-completions response and does not yet include provider-specific retries.
 - Grounding checks verify quoted evidence and numeric claims, but do not perform full natural-language entailment.
 - The deterministic comparison engine aligns sentences using lexical similarity; live AI mode handles paraphrases more effectively.
-- Only plain text and Markdown inputs are supported in this MVP.
+- The MVP supports text-based inputs only; image and binary-document extraction are out of scope.
+- File import supports `.md`, `.txt`, `.html`, and `.htm` up to 1 MB. PDF and DOCX extraction are deliberately deferred.
 - Edits are local to the current browser session and are not versioned.
 - Output is English-first and has not been evaluated across multiple locales.
 
 ## With one additional week
 
-1. Add screenshot, pull-request diff, and structured product-spec ingestion.
+1. Add PDF, DOCX, screenshot, pull-request diff, and structured product-spec ingestion.
 2. Add sentence-level citations and a stronger entailment-based hallucination check.
 3. Introduce reusable voice, terminology, and compliance rules per product.
 4. Add approval states, version history, and exports to Help Centre platforms.
@@ -122,3 +124,5 @@ tests/                    Build-level product checks
 ## Privacy and safety
 
 DocLaunch does not store submitted specifications. Before using a third-party AI provider with confidential product information, the operator should confirm the provider's data-retention and access policies.
+
+Imported documentation files are read in the browser and are never uploaded as files or persisted. Their extracted text is sent to DocLaunch's comparison route only when the user starts a comparison. In live AI mode, that text is also sent to the configured model provider.

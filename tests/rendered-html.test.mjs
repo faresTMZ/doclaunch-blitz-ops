@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path = "/") {
@@ -39,6 +40,17 @@ test("server-renders the DocLaunch product", async () => {
   assert.match(html, /Compare versions/);
   assert.match(html, /Sample data is fictional/);
   assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/);
+});
+
+test("keeps documentation import local and constrained to text formats", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /Upload current documentation/);
+  assert.match(page, /Current documentation or specification/);
+  assert.match(page, /accept="\.md,\.txt,\.html,\.htm,text\/markdown,text\/plain,text\/html"/);
+  assert.match(page, /file\.size > 1_000_000/);
+  assert.match(page, /await file\.text\(\)/);
+  assert.match(page, /new DOMParser\(\)/);
+  assert.doesNotMatch(page, /FormData|\/api\/upload|localStorage/);
 });
 
 test("builds a complete grounded release pack without credentials", async () => {
