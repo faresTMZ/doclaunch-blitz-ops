@@ -42,6 +42,16 @@ test("server-renders the DocLaunch product", async () => {
   assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/);
 });
 
+test("uses a white-led Blitz-inspired visual system without dark section backgrounds", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /--paper: #fcfcfa/);
+  assert.match(css, /--violet: #8000ff/);
+  assert.match(css, /--green: #a7ed4f/);
+  assert.match(css, /\.workspace \{[^}]*background: #faf8fd/);
+  assert.match(css, /\.workspace-grid \{[^}]*background: white/);
+  assert.doesNotMatch(css, /background:\s*(?:#17211b|#202c25|#243129|#1d2921|#1c2720|var\(--ink\))/);
+});
+
 test("imports two documentation versions locally and constrains them to text formats", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   assert.match(page, /Upload Version A/);
