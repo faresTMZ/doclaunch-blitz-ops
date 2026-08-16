@@ -51,6 +51,9 @@ test("keeps documentation import local and constrained to text formats", async (
   assert.match(page, /await file\.text\(\)/);
   assert.match(page, /new DOMParser\(\)/);
   assert.doesNotMatch(page, /FormData|\/api\/upload|localStorage/);
+  const exampleHandler = page.match(/const loadCompareExample = \(\) => \{[\s\S]*?\n  \};/)?.[0] ?? "";
+  assert.match(exampleHandler, /setUploadedFileName\(""\)/);
+  assert.doesNotMatch(exampleHandler, /Fictional Streak Shield 1\.0 example/);
 });
 
 test("builds a complete grounded release pack without credentials", async () => {

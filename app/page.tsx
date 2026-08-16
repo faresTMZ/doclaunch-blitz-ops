@@ -131,7 +131,7 @@ export default function Home() {
     setTone("Clear and reassuring");
     setBeforeBrief(sampleBefore);
     setAfterBrief(sampleAfter);
-    setUploadedFileName("Fictional Streak Shield 1.0 example");
+    setUploadedFileName("");
     setCompareResult(null);
     setError("");
   };
