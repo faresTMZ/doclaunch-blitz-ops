@@ -42,17 +42,25 @@ test("server-renders the DocLaunch product", async () => {
   assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/);
 });
 
-test("keeps documentation import local and constrained to text formats", async () => {
+test("imports two documentation versions locally and constrains them to text formats", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
-  assert.match(page, /Upload current documentation/);
+  assert.match(page, /Upload Version A/);
+  assert.match(page, /Upload Version B/);
   assert.match(page, /Current documentation or specification/);
-  assert.match(page, /accept="\.md,\.txt,\.html,\.htm,text\/markdown,text\/plain,text\/html"/);
+  assert.equal((page.match(/accept="\.md,\.txt,\.html,\.htm,text\/markdown,text\/plain,text\/html"/g) ?? []).length, 2);
+  assert.match(page, /importDocumentationVersion\(event, "before"\)/);
+  assert.match(page, /importDocumentationVersion\(event, "after"\)/);
+  assert.match(page, /setBeforeBrief\(content\.trim\(\)\)/);
+  assert.match(page, /setAfterBrief\(content\.trim\(\)\)/);
+  assert.match(page, /setBeforeFileName\(file\.name\)/);
+  assert.match(page, /setAfterFileName\(file\.name\)/);
   assert.match(page, /file\.size > 1_000_000/);
   assert.match(page, /await file\.text\(\)/);
   assert.match(page, /new DOMParser\(\)/);
   assert.doesNotMatch(page, /FormData|\/api\/upload|localStorage/);
   const exampleHandler = page.match(/const loadCompareExample = async \(\) => \{[\s\S]*?\n  \};/)?.[0] ?? "";
-  assert.match(exampleHandler, /setUploadedFileName\(""\)/);
+  assert.match(exampleHandler, /setBeforeFileName\(""\)/);
+  assert.match(exampleHandler, /setAfterFileName\(""\)/);
   assert.match(exampleHandler, /fetch\("\/examples\/streak-shield-v1\.md"\)/);
   assert.match(exampleHandler, /fetch\("\/examples\/streak-shield-v2\.md"\)/);
   assert.doesNotMatch(exampleHandler, /Fictional Streak Shield 1\.0 example/);

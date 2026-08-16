@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 
 type WorkspaceMode = "generate" | "compare";
+type VersionSide = "before" | "after";
 type ArtifactKey = "helpCentre" | "faq" | "releaseNotes";
 type CompareArtifactKey = "compareReleaseNotes" | "updatedHelpCentre";
 
@@ -73,7 +74,8 @@ export default function Home() {
   const [brief, setBrief] = useState("");
   const [beforeBrief, setBeforeBrief] = useState("");
   const [afterBrief, setAfterBrief] = useState("");
-  const [uploadedFileName, setUploadedFileName] = useState("");
+  const [beforeFileName, setBeforeFileName] = useState("");
+  const [afterFileName, setAfterFileName] = useState("");
   const [result, setResult] = useState<GenerationResult | null>(null);
   const [compareResult, setCompareResult] = useState<CompareResult | null>(null);
   const [activeTab, setActiveTab] = useState<ArtifactKey | "sources">("helpCentre");
@@ -84,7 +86,8 @@ export default function Home() {
   const [loadingExample, setLoadingExample] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const beforeFileInputRef = useRef<HTMLInputElement>(null);
+  const afterFileInputRef = useRef<HTMLInputElement>(null);
 
   const wordCount = useMemo(() => brief.trim().split(/\s+/).filter(Boolean).length, [brief]);
   const beforeWordCount = useMemo(() => beforeBrief.trim().split(/\s+/).filter(Boolean).length, [beforeBrief]);
@@ -130,7 +133,8 @@ export default function Home() {
       setTone("Clear and reassuring");
       setBeforeBrief(beforeExample);
       setAfterBrief(afterExample);
-      setUploadedFileName("");
+      setBeforeFileName("");
+      setAfterFileName("");
       setCompareResult(null);
     } catch (exampleError) {
       setError(exampleError instanceof Error ? exampleError.message : "Unable to load the fictional comparison files.");
@@ -139,7 +143,7 @@ export default function Home() {
     }
   };
 
-  const importCurrentDocumentation = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const importDocumentationVersion = async (event: React.ChangeEvent<HTMLInputElement>, version: VersionSide) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const extension = file.name.split(".").pop()?.toLowerCase();
@@ -160,8 +164,13 @@ export default function Home() {
         ? new DOMParser().parseFromString(rawContent, "text/html").body.innerText
         : rawContent;
       if (content.trim().length < 20) throw new Error("The selected file does not contain enough readable text.");
-      setBeforeBrief(content.trim());
-      setUploadedFileName(file.name);
+      if (version === "before") {
+        setBeforeBrief(content.trim());
+        setBeforeFileName(file.name);
+      } else {
+        setAfterBrief(content.trim());
+        setAfterFileName(file.name);
+      }
       setCompareResult(null);
       setError("");
     } catch (fileError) {
@@ -174,7 +183,7 @@ export default function Home() {
   const useLastGeneratedArticle = () => {
     if (!artifacts.helpCentre) return;
     setBeforeBrief(artifacts.helpCentre);
-    setUploadedFileName("Last generated Help Centre article");
+    setBeforeFileName("Last generated Help Centre article");
     setCompareResult(null);
     setError("");
   };
@@ -320,20 +329,31 @@ export default function Home() {
               </>
             ) : (
               <div className="version-fields">
-                <div className="document-import">
-                  <div className="import-heading"><span>Current customer support documentation</span><small>Version A</small></div>
-                  <div className="import-actions">
-                    <button type="button" onClick={() => fileInputRef.current?.click()}><span aria-hidden="true">↑</span> Upload current documentation</button>
-                    <button type="button" disabled={!artifacts.helpCentre} onClick={useLastGeneratedArticle}><span aria-hidden="true">↺</span> Use last generated article</button>
+                <div className="document-import-grid">
+                  <div className="document-import">
+                    <div className="import-heading"><span>Current documentation</span><small>Version A</small></div>
+                    <div className="import-actions">
+                      <button type="button" onClick={() => beforeFileInputRef.current?.click()}><span aria-hidden="true">↑</span> Upload Version A</button>
+                      <button type="button" disabled={!artifacts.helpCentre} onClick={useLastGeneratedArticle}><span aria-hidden="true">↺</span> Use last generated article</button>
+                    </div>
+                    <input ref={beforeFileInputRef} className="visually-hidden" type="file" accept=".md,.txt,.html,.htm,text/markdown,text/plain,text/html" onChange={(event) => importDocumentationVersion(event, "before")} aria-label="Upload Version A documentation" />
+                    <p>Markdown, text, or HTML · 1 MB max</p>
+                    {beforeFileName && <div className="file-status"><span aria-hidden="true">✓</span><div><strong>{beforeFileName}</strong><small>Loaded into Version A</small></div><button type="button" onClick={() => { setBeforeBrief(""); setBeforeFileName(""); setCompareResult(null); }} aria-label="Remove Version A file">×</button></div>}
                   </div>
-                  <input ref={fileInputRef} className="visually-hidden" type="file" accept=".md,.txt,.html,.htm,text/markdown,text/plain,text/html" onChange={importCurrentDocumentation} aria-label="Upload current customer support documentation" />
-                  <p>Markdown, text, or HTML · 1 MB maximum · read locally, never stored</p>
-                  {uploadedFileName && <div className="file-status"><span aria-hidden="true">✓</span><div><strong>{uploadedFileName}</strong><small>Loaded into Version A</small></div><button type="button" onClick={() => { setBeforeBrief(""); setUploadedFileName(""); setCompareResult(null); }} aria-label="Remove imported documentation">×</button></div>}
+                  <div className="document-import">
+                    <div className="import-heading"><span>Updated documentation</span><small>Version B</small></div>
+                    <div className="import-actions">
+                      <button type="button" onClick={() => afterFileInputRef.current?.click()}><span aria-hidden="true">↑</span> Upload Version B</button>
+                    </div>
+                    <input ref={afterFileInputRef} className="visually-hidden" type="file" accept=".md,.txt,.html,.htm,text/markdown,text/plain,text/html" onChange={(event) => importDocumentationVersion(event, "after")} aria-label="Upload Version B documentation" />
+                    <p>Read locally and never stored</p>
+                    {afterFileName && <div className="file-status"><span aria-hidden="true">✓</span><div><strong>{afterFileName}</strong><small>Loaded into Version B</small></div><button type="button" onClick={() => { setAfterBrief(""); setAfterFileName(""); setCompareResult(null); }} aria-label="Remove Version B file">×</button></div>}
+                  </div>
                 </div>
                 <div className="paste-divider"><span>or paste and edit</span></div>
-                <label className="brief-field"><span><b>A</b> Current documentation or specification</span><textarea value={beforeBrief} onChange={(event) => { setBeforeBrief(event.target.value); setUploadedFileName(""); }} placeholder="Upload a file above or paste the current documentation…" aria-describedby="before-help" /></label>
+                <label className="brief-field"><span><b>A</b> Current documentation or specification</span><textarea value={beforeBrief} onChange={(event) => { setBeforeBrief(event.target.value); setBeforeFileName(""); }} placeholder="Upload a file above or paste the current documentation…" aria-describedby="before-help" /></label>
                 <div className="field-footer" id="before-help"><span>{beforeWordCount} words</span><span>Baseline</span></div>
-                <label className="brief-field"><span><b>B</b> Updated documentation or specification</span><textarea value={afterBrief} onChange={(event) => setAfterBrief(event.target.value)} placeholder="Paste the updated documentation or new feature specification…" aria-describedby="after-help" /></label>
+                <label className="brief-field"><span><b>B</b> Updated documentation or specification</span><textarea value={afterBrief} onChange={(event) => { setAfterBrief(event.target.value); setAfterFileName(""); }} placeholder="Upload a file above or paste the updated documentation…" aria-describedby="after-help" /></label>
                 <div className="field-footer" id="after-help"><span>{afterWordCount} words</span><span>Proposed release</span></div>
               </div>
             )}

@@ -105,11 +105,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .version-fields .brief-field > span { display: flex; align-items: center; gap: 7px; }
 .version-fields .brief-field b { width: 18px; height: 18px; display: inline-grid; place-items: center; border-radius: 5px; background: #3b493f; color: var(--green); font-size: 9px; }
 .version-fields textarea { min-height: 190px; }
-.document-import { margin-top: 17px; padding: 15px; border: 1px dashed #5b6a60; border-radius: 11px; background: #1c2720; }
+.document-import-grid { margin-top: 17px; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.document-import { min-width: 0; padding: 13px; border: 1px dashed #5b6a60; border-radius: 11px; background: #1c2720; }
 .import-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .import-heading > span { color: #dce5de; font-size: 11px; font-weight: 800; }
 .import-heading small { padding: 4px 7px; border-radius: 999px; background: #37463b; color: var(--green); font-size: 8px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
-.import-actions { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.import-actions { margin-top: 12px; display: grid; grid-template-columns: 1fr; gap: 7px; }
 .import-actions button { min-height: 42px; padding: 8px 10px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid #516057; border-radius: 8px; background: #2c3b31; color: #e1e9e3; font-size: 9px; font-weight: 800; line-height: 1.25; }
 .import-actions button:hover:not(:disabled) { border-color: #799063; background: #36483b; }
 .import-actions button:disabled { cursor: not-allowed; opacity: .38; }
@@ -254,6 +255,7 @@ footer > span:last-child { margin-left: auto; }
   .field-row { grid-template-columns: 1fr; }
   .input-panel textarea { min-height: 280px; }
   .version-fields textarea { min-height: 190px; }
+  .document-import-grid { grid-template-columns: 1fr; }
   .import-actions { grid-template-columns: 1fr; }
   .empty-state { min-height: 530px; padding: 30px; }
   .result-summary { align-items: flex-start; flex-wrap: wrap; }
