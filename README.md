@@ -118,6 +118,7 @@ app/api/generate/route.ts Generation, grounding, and demo engine
 app/api/compare/route.ts  Version comparison and change validation
 app/globals.css           Responsive visual system
 examples/                 Ready-to-use feature brief
+public/examples/          Downloadable Version A and Version B samples loaded by the app
 tests/                    Build-level product checks
 ```
 

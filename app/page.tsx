@@ -52,22 +52,6 @@ Players aged 18 or over receive one Streak Shield per calendar month. It is enab
 
 Players can check availability from Profile > Rewards > Streak Shield. A used shield cannot be restored or refunded. The feature is not available on Android at launch. Customer Support can verify shield usage in the player's activity feed but cannot manually grant a replacement.`;
 
-const sampleBefore = `# Streak Shield 1.0
-
-Streak Shield protects an eligible player's weekly play streak when they miss one day. It is available on iOS in the United States.
-
-Players aged 18 or over receive one Streak Shield per calendar month. When a player misses a day, the shield is applied at midnight local time and the streak remains active.
-
-Players can check shield availability from Profile > Rewards > Streak Shield. A used shield cannot be restored or refunded. Customer Support can verify shield usage in the activity feed but cannot manually grant a replacement.`;
-
-const sampleAfter = `# Streak Shield 1.1
-
-Streak Shield protects an eligible player's weekly play streak when they miss one day. Starting with mobile app version 8.31, it is available on iOS and Android in the United States and Canada.
-
-Players aged 18 or over receive two Streak Shields per calendar month. When a player misses a day, the shield is applied at midnight local time and the streak remains active. Players now receive an in-app notification after a shield is applied.
-
-Players can check their remaining shields from Profile > Rewards > Streak Shield. A used shield cannot be restored or refunded. Customer Support can verify shield usage in the activity feed but cannot manually grant a replacement.`;
-
 const generationTabs: Array<{ key: ArtifactKey | "sources"; label: string; short: string }> = [
   { key: "helpCentre", label: "Help Centre", short: "Article" },
   { key: "faq", label: "FAQ", short: "FAQ" },
@@ -97,6 +81,7 @@ export default function Home() {
   const [artifacts, setArtifacts] = useState<Record<ArtifactKey, string>>({ helpCentre: "", faq: "", releaseNotes: "" });
   const [compareArtifacts, setCompareArtifacts] = useState<Record<CompareArtifactKey, string>>({ compareReleaseNotes: "", updatedHelpCentre: "" });
   const [loading, setLoading] = useState(false);
+  const [loadingExample, setLoadingExample] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,15 +110,33 @@ export default function Home() {
     setError("");
   };
 
-  const loadCompareExample = () => {
-    setProductName("Blitz");
-    setAudience("Players");
-    setTone("Clear and reassuring");
-    setBeforeBrief(sampleBefore);
-    setAfterBrief(sampleAfter);
-    setUploadedFileName("");
-    setCompareResult(null);
+  const loadCompareExample = async () => {
+    setLoadingExample(true);
     setError("");
+    try {
+      const [beforeResponse, afterResponse] = await Promise.all([
+        fetch("/examples/streak-shield-v1.md"),
+        fetch("/examples/streak-shield-v2.md"),
+      ]);
+      if (!beforeResponse.ok || !afterResponse.ok) {
+        throw new Error("Unable to load the fictional comparison files.");
+      }
+      const [beforeExample, afterExample] = await Promise.all([
+        beforeResponse.text(),
+        afterResponse.text(),
+      ]);
+      setProductName("Blitz");
+      setAudience("Players");
+      setTone("Clear and reassuring");
+      setBeforeBrief(beforeExample);
+      setAfterBrief(afterExample);
+      setUploadedFileName("");
+      setCompareResult(null);
+    } catch (exampleError) {
+      setError(exampleError instanceof Error ? exampleError.message : "Unable to load the fictional comparison files.");
+    } finally {
+      setLoadingExample(false);
+    }
   };
 
   const importCurrentDocumentation = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -291,11 +294,18 @@ export default function Home() {
           <section className="input-panel" aria-labelledby="source-title">
             <div className="panel-heading">
               <div><span className="step-number">01</span><h3 id="source-title">{mode === "generate" ? "Source context" : "Version context"}</h3></div>
-              <button className="text-button" type="button" onClick={mode === "generate" ? loadExample : loadCompareExample}>
-                Load fictional example
+              <button className="text-button" type="button" disabled={mode === "compare" && loadingExample} onClick={mode === "generate" ? loadExample : loadCompareExample}>
+                {mode === "compare" && loadingExample ? "Loading example files…" : "Load fictional example"}
               </button>
             </div>
             <div className="fictional-note"><span aria-hidden="true">i</span> Sample data is fictional and created only for this case study.</div>
+            {mode === "compare" && (
+              <div className="sample-file-links">
+                <span>Example files</span>
+                <a href="/examples/streak-shield-v1.md" download>Version A · .md</a>
+                <a href="/examples/streak-shield-v2.md" download>Version B · .md</a>
+              </div>
+            )}
 
             <div className="field-row">
               <label><span>Product</span><input value={productName} onChange={(event) => setProductName(event.target.value)} /></label>

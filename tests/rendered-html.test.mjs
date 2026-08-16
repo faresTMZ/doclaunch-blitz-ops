@@ -51,9 +51,24 @@ test("keeps documentation import local and constrained to text formats", async (
   assert.match(page, /await file\.text\(\)/);
   assert.match(page, /new DOMParser\(\)/);
   assert.doesNotMatch(page, /FormData|\/api\/upload|localStorage/);
-  const exampleHandler = page.match(/const loadCompareExample = \(\) => \{[\s\S]*?\n  \};/)?.[0] ?? "";
+  const exampleHandler = page.match(/const loadCompareExample = async \(\) => \{[\s\S]*?\n  \};/)?.[0] ?? "";
   assert.match(exampleHandler, /setUploadedFileName\(""\)/);
+  assert.match(exampleHandler, /fetch\("\/examples\/streak-shield-v1\.md"\)/);
+  assert.match(exampleHandler, /fetch\("\/examples\/streak-shield-v2\.md"\)/);
   assert.doesNotMatch(exampleHandler, /Fictional Streak Shield 1\.0 example/);
+  assert.doesNotMatch(page, /const sampleBefore|const sampleAfter/);
+});
+
+test("ships two distinct downloadable comparison example files", async () => {
+  const [versionA, versionB] = await Promise.all([
+    readFile(new URL("../public/examples/streak-shield-v1.md", import.meta.url), "utf8"),
+    readFile(new URL("../public/examples/streak-shield-v2.md", import.meta.url), "utf8"),
+  ]);
+  assert.match(versionA, /Streak Shield 1\.0/);
+  assert.match(versionA, /one Streak Shield per calendar month/);
+  assert.match(versionB, /Streak Shield 1\.1/);
+  assert.match(versionB, /two Streak Shields per calendar month/);
+  assert.notEqual(versionA, versionB);
 });
 
 test("builds a complete grounded release pack without credentials", async () => {
