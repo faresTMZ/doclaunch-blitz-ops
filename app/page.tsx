@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 
 type WorkspaceMode = "generate" | "compare";
+type Theme = "light" | "dark";
 type VersionSide = "before" | "after";
 type ArtifactKey = "helpCentre" | "faq" | "releaseNotes";
 type CompareArtifactKey = "compareReleaseNotes" | "updatedHelpCentre";
@@ -68,6 +69,7 @@ const compareTabs: Array<{ key: CompareArtifactKey | "changes"; label: string; s
 
 export default function Home() {
   const [mode, setMode] = useState<WorkspaceMode>("generate");
+  const [theme, setTheme] = useState<Theme>("light");
   const [productName, setProductName] = useState("Blitz");
   const [audience, setAudience] = useState("Players");
   const [tone, setTone] = useState("Clear and reassuring");
@@ -267,10 +269,18 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <main className={`app-shell theme-${theme}`}>
       <header className="topbar">
         <a className="brand" href="#top" aria-label="DocLaunch home"><span className="brand-mark">D</span><span>DocLaunch</span></a>
-        <div className="topbar-meta"><span className="status-dot" aria-hidden="true" />Source-grounded workspace<span className="case-pill">Case study · Option B</span></div>
+        <div className="topbar-meta">
+          <span className="status-dot" aria-hidden="true" />
+          <span className="workspace-status">Source-grounded workspace</span>
+          <button className="theme-toggle" type="button" aria-pressed={theme === "dark"} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+            <span className="theme-icon" aria-hidden="true">{theme === "light" ? "◐" : "☀"}</span>
+            <span>{theme === "light" ? "Dark" : "Light"}</span>
+          </button>
+          <span className="case-pill">Case study · Option B</span>
+        </div>
       </header>
 
       <section className="hero" id="top">
