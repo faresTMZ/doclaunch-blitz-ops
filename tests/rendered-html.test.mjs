@@ -82,7 +82,7 @@ test("imports two documentation versions locally and constrains them to text for
   assert.match(page, /await file\.text\(\)/);
   assert.match(page, /new DOMParser\(\)/);
   assert.doesNotMatch(page, /FormData|\/api\/upload|localStorage/);
-  const exampleHandler = page.match(/const loadCompareExample = async \(\) => \{[\s\S]*?\n  \};/)?.[0] ?? "";
+  const exampleHandler = page.match(/const loadCompareExample = async \(\) => \{[\s\S]*?\n {2}\};/)?.[0] ?? "";
   assert.match(exampleHandler, /setBeforeFileName\(""\)/);
   assert.match(exampleHandler, /setAfterFileName\(""\)/);
   assert.match(exampleHandler, /fetch\("\/examples\/streak-shield-v1\.md"\)/);
@@ -101,6 +101,18 @@ test("ships two distinct downloadable comparison example files", async () => {
   assert.match(versionB, /Streak Shield 1\.1/);
   assert.match(versionB, /two Streak Shields per calendar month/);
   assert.notEqual(versionA, versionB);
+});
+
+test("shows a meaningful comparison percentage and the complete change map", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /Comparison confidence \$\{compareResult\.comparisonScore\}%/);
+  assert.match(page, /\{compareResult\.comparisonScore\}<small>%<\/small>/);
+  assert.doesNotMatch(page, /\{compareResult\.changes\.length\}<small>∆<\/small>/);
+  assert.match(css, /\.change-map \{ min-height: 550px; padding: 22px; \}/);
+  assert.doesNotMatch(css, /\.change-map \{[^}]*height: 550px;[^}]*overflow: auto/);
 });
 
 test("builds a complete grounded release pack without credentials", async () => {

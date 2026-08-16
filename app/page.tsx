@@ -273,8 +273,6 @@ export default function Home() {
       <header className="topbar">
         <a className="brand" href="#top" aria-label="DocLaunch home"><span className="brand-mark">D</span><span>DocLaunch</span></a>
         <div className="topbar-meta">
-          <span className="status-dot" aria-hidden="true" />
-          <span className="workspace-status">Source-grounded workspace</span>
           <button className="theme-toggle" type="button" aria-pressed={theme === "dark"} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
             <span className="theme-icon" aria-hidden="true">{theme === "light" ? "◐" : "☀"}</span>
             <span>{theme === "light" ? "Dark" : "Light"}</span>
@@ -401,7 +399,7 @@ export default function Home() {
               ) : (
                 <>
                   <div className="result-summary compare-result-summary">
-                    <div className="score-ring" style={{ "--score": `${compareResult.comparisonScore * 3.6}deg` } as React.CSSProperties}><span>{compareResult.changes.length}<small>∆</small></span></div>
+                    <div className="score-ring" aria-label={`Comparison confidence ${compareResult.comparisonScore}%`} style={{ "--score": `${compareResult.comparisonScore * 3.6}deg` } as React.CSSProperties}><span>{compareResult.comparisonScore}<small>%</small></span></div>
                     <div><span className="section-kicker">Version impact</span><h3 id="output-title">Change set mapped</h3><p>{changeCounts.added} added · {changeCounts.changed} changed · {changeCounts.removed} removed · {changeCounts.unclear} unclear · {compareResult.provider}</p></div>
                     <QualityBadge warnings={compareResult.groundingWarnings.length} />
                   </div>

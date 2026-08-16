@@ -47,7 +47,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--violet-night); font-family: var(--display); font-size: 20px; font-weight: 900; text-decoration: none; letter-spacing: -.02em; text-transform: uppercase; }
 .brand-mark { width: 31px; height: 31px; display: inline-grid; place-items: center; border-radius: 5px; background: var(--violet); color: white; font-family: var(--display); font-size: 19px; font-style: normal; font-weight: 900; box-shadow: 4px 4px 0 var(--green); }
 .topbar-meta { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px #effbdc; }
 .case-pill { margin-left: 10px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: var(--panel); }
 .theme-toggle { min-height: 34px; padding: 5px 9px 5px 6px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #d8c8e5; border-radius: 999px; background: white; color: var(--violet-deep); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
 .theme-toggle:hover { border-color: var(--violet); background: var(--violet-soft); }
@@ -200,7 +199,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .warnings-card ul { margin: 12px 0 0; padding-left: 18px; color: #6e513f; font-size: 11px; line-height: 1.55; }
 
 .compare-tabs button { flex: 1; }
-.change-map { height: 550px; padding: 22px; overflow: auto; }
+.change-map { min-height: 550px; padding: 22px; }
 .change-map-toolbar { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .change-map-toolbar h4 { margin: 0 0 4px; color: var(--violet-night); font-family: var(--display); font-size: 18px; font-weight: 900; text-transform: uppercase; }
 .change-map-toolbar > div > span { color: var(--muted); font-size: 9px; }
@@ -253,7 +252,6 @@ footer > span:last-child { margin-left: auto; }
 }
 .theme-dark .topbar { background: rgba(31, 10, 49, .94); }
 .theme-dark .brand-mark { background: #8f20f5; color: white; }
-.theme-dark .status-dot { box-shadow: 0 0 0 4px rgba(167, 237, 79, .14); }
 .theme-dark .case-pill { background: #2e1044; }
 .theme-dark .theme-toggle { border-color: #694079; background: #321348; color: #eadcf5; }
 .theme-dark .theme-toggle:hover { border-color: var(--violet); background: #3e1758; }
@@ -335,8 +333,6 @@ footer > span:last-child { margin-left: auto; }
 @media (max-width: 640px) {
   .topbar { padding: 0 20px; }
   .topbar-meta { font-size: 0; }
-  .topbar-meta .status-dot { display: none; }
-  .workspace-status { display: none; }
   .case-pill { display: none; }
   .theme-toggle { font-size: 9px; }
   .hero { padding: 55px 20px 45px; }
