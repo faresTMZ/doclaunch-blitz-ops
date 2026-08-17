@@ -55,23 +55,19 @@ No API key is required for the demo. The example content is invented for this ca
 
 Supported uploads: `.md`, `.txt`, `.html`, and `.htm`, up to 1 MB per file.
 
-## Optional live AI mode
+## Next steps
 
-The default demo engine is deterministic and runs without credentials. To use a live model, copy `.env.example` to `.env.local` and configure:
+### AI-assisted drafting and comparison (planned)
 
-- `LLM_API_KEY`;
-- `LLM_MODEL`;
-- `LLM_BASE_URL` for an OpenAI-compatible chat-completions endpoint.
+A future version can integrate and validate hosted AI models to produce more natural drafts, identify less obvious differences between documents, and improve open-question suggestions. The implementation should be evaluated for source grounding, consistency, latency, and cost before being presented as production-ready.
 
-Rebuild and restart the application after changing the configuration. Provider credentials remain on the server and are never entered in the browser.
+### More source and publishing formats
 
-## Product safeguards
+Add support for common documentation formats such as PDF, DOCX and Images, followed by direct import and publishing integrations for the tools used by support teams.
 
-- Generated documents share one source-backed fact map.
-- Missing information becomes an explicit question instead of an invented answer.
-- Evidence excerpts and unsupported numeric claims are checked before results are shown.
-- Generated content stays editable and requires human review before publication.
-- The application is stateless: submitted documents and generated content are not persisted.
+### Saved projects and review workflow
+
+Persist project history, reviewer comments, approval status, and previous exports so teams can collaborate on a release pack and keep a clear audit trail.
 
 ## Validation
 
