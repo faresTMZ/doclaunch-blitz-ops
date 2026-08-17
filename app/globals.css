@@ -12,7 +12,7 @@
   --violet-deep: #4d0891;
   --violet-night: #330f57;
   --violet-soft: #f5effb;
-  --display: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  --display: var(--font-display), "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -21,7 +21,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
 }
 .app-shell { min-height: 100vh; background: var(--paper); color: var(--ink); }
 button, input, select, textarea { font: inherit; }
@@ -57,6 +57,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .hero::after { content: ""; width: 190px; height: 120px; position: absolute; right: 5vw; top: 58px; z-index: 0; opacity: .35; background-image: radial-gradient(var(--violet) .8px, transparent .8px); background-size: 14px 14px; }
 .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; color: var(--violet-deep); font-size: 11px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
 .eyebrow span, .step-number { width: 28px; height: 28px; display: inline-grid; place-items: center; border: 1px solid #bdc6bd; border-radius: 50%; color: var(--muted); font-size: 10px; }
+.eyebrow > span { width: auto; height: auto; display: inline-block; border: 0; border-radius: 0; color: var(--green); font-size: 11px; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .7fr); gap: 8vw; align-items: end; }
 .hero h1 { max-width: 920px; margin: 0; color: var(--violet-night); font-family: var(--display); font-size: clamp(50px, 7vw, 108px); font-weight: 900; line-height: .86; letter-spacing: -.045em; text-transform: uppercase; }
 .hero h1 em { color: var(--violet); font-family: inherit; font-style: normal; font-weight: 900; }

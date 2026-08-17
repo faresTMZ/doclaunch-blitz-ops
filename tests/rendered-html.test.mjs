@@ -52,12 +52,12 @@ test("uses a white-led Blitz-inspired default visual system", async () => {
   assert.doesNotMatch(css, /background:\s*(?:#17211b|#202c25|#243129|#1d2921|#1c2720|var\(--ink\))/);
 });
 
-test("offers an accessible deep-violet dark theme switch", async () => {
+test("uses deep violet by default and keeps an accessible light theme switch", async () => {
   const [page, css] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /useState<Theme>\("light"\)/);
+  assert.match(page, /useState<Theme>\("dark"\)/);
   assert.match(page, /app-shell theme-\$\{theme\}/);
   assert.match(page, /aria-pressed=\{theme === "dark"\}/);
   assert.match(page, /Switch to \$\{theme === "light" \? "dark" : "light"\} theme/);

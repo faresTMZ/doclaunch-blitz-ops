@@ -69,7 +69,7 @@ const compareTabs: Array<{ key: CompareArtifactKey | "changes"; label: string; s
 
 export default function Home() {
   const [mode, setMode] = useState<WorkspaceMode>("generate");
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [productName, setProductName] = useState("Blitz");
   const [audience, setAudience] = useState("Players");
   const [tone, setTone] = useState("Clear and reassuring");
@@ -282,7 +282,7 @@ export default function Home() {
       </header>
 
       <section className="hero" id="top">
-        <div className="eyebrow"><span>01</span> Release documentation, without the guesswork</div>
+        <div className="eyebrow"><span>(01)</span> Release documentation, without the guesswork</div>
         <div className="hero-grid">
           <div><h1>Turn product context into <em>support-ready</em> documentation.</h1></div>
           <div className="hero-copy">
